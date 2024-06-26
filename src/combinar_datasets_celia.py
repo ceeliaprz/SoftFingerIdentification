@@ -61,11 +61,12 @@ from scipy.interpolate import interp1d
 # df_resampled.to_excel(output_path, index=False)
 
 
-
-
 #SEGUNDO MOCAP############################################################################################################################################################################
 ## PRIMERO: poner los 3 datasets del mocap con el mismo numero de filas, vamos a quitar las filas que sobran al principio con el temporizador
-# mocap1_6_df = pd.read_excel('~/Documentos/cuartaprueba(midiendo)/test1.6_brutos_quitandofilas2.xlsx')
+#mocap1_5_df = pd.read_excel('~/Documentos/cuartaprueba(midiendo)/test2.0_brutos_quitandofilas2.xlsx')
+#mocap1_6_df = pd.read_excel('~/Documentos/cuartaprueba(midiendo)/test2.1_brutos_quitandofilas2.xlsx')
+#mocap1_7_df = pd.read_excel('~/Documentos/cuartaprueba(midiendo)/test2.2_brutos_quitandofilas2.xlsx')
+
 # # # Parámetros proporcionados
 # # # tiempo_a_quitar = 3.26  # en segundos
 # # # frecuencia_muestreo = 120  # en Hz
@@ -81,78 +82,71 @@ from scipy.interpolate import interp1d
 # # # # Eliminar las filas iniciales
 # # #mocap1_7_df = mocap1_7_df.iloc[filas_a_eliminar:].reset_index(drop=True) #Eliminamos las filas iniciales utilizando iloc para seleccionar 
 # # # #las filas desde filas_a_eliminar hasta el final del DataFrame y luego reiniciamos los índices con reset_index(drop=True).
-# start_row = 16702
-# end_row = start_row + 432
 
-# # # # # Eliminar filas específicas
-# mocap1_6_df = mocap1_6_df.drop(mocap1_6_df.index[start_row:end_row]).reset_index(drop=True)
 
-# # # # # # Guardar el DataFrame modificado en un nuevo archivo
-# output_path = '~/Documentos/cuartaprueba(midiendo)/test1.6_brutos_quitandofilas2.xlsx'
+# Eliminar filas específicas para alinear entre si los 3 datasets
+# start_row = 11072
+# end_row = start_row + 30
+#mocap1_5_df = mocap1_5_df.drop(mocap1_5_df.index[start_row:end_row]).reset_index(drop=True)
+#mocap1_6_df = mocap1_6_df.drop(mocap1_6_df.index[start_row:end_row]).reset_index(drop=True)
+#mocap1_7_df = mocap1_7_df.drop(mocap1_7_df.index[start_row:end_row]).reset_index(drop=True)
+
+# # # # # # # Guardar el DataFrame modificado en un nuevo archivo
+# output_path = '~/Documentos/cuartaprueba(midiendo)/test2.0_brutos_quitandofilas2.xlsx'
+# mocap1_5_df.to_excel(output_path, index=False)
+
+# output_path = '~/Documentos/cuartaprueba(midiendo)/test2.1_brutos_quitandofilas2.xlsx'
 # mocap1_6_df.to_excel(output_path, index=False)
 
+# output_path = '~/Documentos/cuartaprueba(midiendo)/test2.2_brutos_quitandofilas2.xlsx'
+# mocap1_7_df.to_excel(output_path, index=False)
 
 #ALINEAR los 3 DATASETS de MOCAP############################################################################################################################################################################
 # Cargar los datos
-mocap1_5_df = pd.read_excel('~/Documentos/cuartaprueba(midiendo)/test1.5_brutos_quitandofilas2.xlsx')
-mocap1_6_df = pd.read_excel('~/Documentos/cuartaprueba(midiendo)/test1.6_brutos_quitandofilas2.xlsx')
-mocap1_7_df = pd.read_excel('~/Documentos/cuartaprueba(midiendo)/test1.7_brutos_quitandofilas2.xlsx')
-
-def detect_keypoints(df, column, threshold):
-    diffs = df[column].diff().abs()
-    keypoints = df[diffs > threshold].index
-    return keypoints
-
-# Detectar puntos clave en los tres datasets
-mocap1_5_keypoints = detect_keypoints(mocap1_5_df, 'Resultant Rotation Z', threshold=0.5)
-mocap1_6_keypoints = detect_keypoints(mocap1_6_df, 'Resultant Rotation Z', threshold=0.5)
-mocap1_7_keypoints = detect_keypoints(mocap1_7_df, 'Resultant Rotation Z', threshold=0.5)
+# mocap1_5_df = pd.read_excel('~/Documentos/ROB. BLANDA/SoftClawIdentification/cuartaprueba(DATOSMOCAP)/test2.0_brutos_quitandofilas2.xlsx')
+# mocap1_6_df = pd.read_excel('~/Documentos/ROB. BLANDA/SoftClawIdentification/cuartaprueba(DATOSMOCAP)/test2.1_brutos_quitandofilas2.xlsx')
+# mocap1_7_df = pd.read_excel('~/Documentos/ROB. BLANDA/SoftClawIdentification/cuartaprueba(DATOSMOCAP)/test2.2_brutos_quitandofilas2.xlsx')
 
 
-# Alinear los puntos clave entre los tres datasets
-def align_multiple_keypoints(*keypoints_lists):
-    min_len = min(map(len, keypoints_lists))
-    aligned_keypoints = [keypoints[:min_len] for keypoints in keypoints_lists]
-    return aligned_keypoints
+# # Crear la figura y los subplots
+# fig, axs = plt.subplots(2, 1, figsize=(14, 14))
 
-aligned_keypoints = align_multiple_keypoints(mocap1_5_keypoints, mocap1_6_keypoints, mocap1_7_keypoints)
-aligned_mocap1_5_keypoints, aligned_mocap1_6_keypoints, aligned_mocap1_7_keypoints = aligned_keypoints
+# # Sincronización de los datasets
+# axs[0].plot(mocap1_5_df.index, mocap1_5_df['Resultant Rotation Z'], label='Mocap 2.0')
+# axs[0].plot(mocap1_6_df.index, mocap1_6_df['Resultant Rotation Z'], label='Mocap 2.1')
+# axs[0].plot(mocap1_7_df.index, mocap1_7_df['Resultant Rotation Z'], label='Mocap 2.2')
+# axs[0].set_xlabel('Index')
+# axs[0].set_ylabel('Rotation Z')
+# axs[0].legend()
+# axs[0].set_title('Synchronization of Mocap Data')
 
 
-# Sincronizar los datasets utilizando interpolación
-def synchronize_data(reference_df, target_df, reference_keypoints, target_keypoints):
-    reference_index = reference_df.loc[reference_keypoints].index
-    target_index = target_df.loc[target_keypoints].index
-    
-    interp_func = interp1d(target_index, reference_index, kind='linear', fill_value='extrapolate')
-    synchronized_index = interp_func(target_df.index)
-    
-    target_df['synchronized_index'] = synchronized_index
-    synchronized_target_df = target_df.set_index('synchronized_index').reindex(reference_df.index).interpolate().reset_index()
-    
-    return synchronized_target_df
+# ## MEDIA 3 DEL MOCAP
+# # Asignar nombres de columnas
+# columns = ['Resultant Rotation X', 'Resultant Rotation Y', 'Resultant Rotation Z', 'Resultant Position X', 'Resultant Position Y', 'Resultant Position Z']
+# mocap1_5_df.columns = columns
+# mocap1_6_df.columns = columns
+# mocap1_7_df.columns = columns
 
-synchronized_mocap1_6_df = synchronize_data(mocap1_5_df, mocap1_6_df, aligned_mocap1_5_keypoints, aligned_mocap1_6_keypoints)
-synchronized_mocap1_7_df = synchronize_data(mocap1_5_df, mocap1_7_df, aligned_mocap1_5_keypoints, aligned_mocap1_7_keypoints)
+# # Calcular la media de los tres datasets
+# df_mean = (mocap1_5_df + mocap1_6_df + mocap1_7_df) / 3
 
-plt.figure(figsize=(14, 7))
+# # Gráfica de la media
+# axs[1].plot(df_mean.index, df_mean['Resultant Rotation Z'], label='Mean Mocap')
+# axs[1].set_xlabel('Index')
+# axs[1].set_ylabel('Rotation Z')
+# axs[1].legend()
+# axs[1].set_title('Mean Rotation Z of Mocap Data')
 
-# Plot original data for reference
-plt.plot(mocap1_5_df.index, mocap1_5_df['Resultant Rotation Z'], label='Mocap 1.5')
-plt.plot(mocap1_6_df.index, mocap1_6_df['Resultant Rotation Z'], label='Mocap 1.6')
-plt.plot(mocap1_7_df.index, mocap1_7_df['Resultant Rotation Z'], label='Mocap 1.7')
+# # Mostrar la figura con los subplots
+# plt.tight_layout()
+# plt.show()
 
-# Plot keypoints
-plt.scatter(mocap1_5_df.loc[aligned_mocap1_5_keypoints].index, mocap1_5_df.loc[aligned_mocap1_5_keypoints, 'Resultant Rotation Z'], color='red', label='Mocap 1.5 Key Points')
-plt.scatter(mocap1_6_df.loc[aligned_mocap1_6_keypoints].index, mocap1_6_df.loc[aligned_mocap1_6_keypoints, 'Resultant Rotation Z'], color='green', label='Mocap 1.6 Key Points')
-plt.scatter(mocap1_7_df.loc[aligned_mocap1_7_keypoints].index, mocap1_7_df.loc[aligned_mocap1_7_keypoints, 'Resultant Rotation Z'], color='blue', label='Mocap 1.7 Key Points')
-
-plt.xlabel('Index')
-plt.ylabel('Rotation Z')
-plt.legend()
-plt.title('Synchronization of Mocap Data with Key Points')
-plt.show()
+# # Guardar el nuevo dataset con la media
+# df_mean.to_excel('~/Documentos/ROB. BLANDA/SoftClawIdentification/cuartaprueba(DATOSMOCAP)/data_test2_MOCAP.xlsx', index=False)
 
 #ALINEAR DATASET MOCAP CON ENCODER############################################################################################################################################################################
-
+# Cargar los datos
+encoder_df = pd.read_excel('~/Documentos/ROB. BLANDA/SOFIA_Python/data/Data_prueba_celia/cuarta_prueba/data_test1_ENCODER_120hz.xlsx')
+mocap_df = pd.read_excel('~/Documentos/ROB. BLANDA/SoftClawIdentification/cuartaprueba(DATOSMOCAP)/data_test1_MOCAP.xlsx')
 
