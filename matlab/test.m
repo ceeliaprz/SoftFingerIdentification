@@ -1,7 +1,7 @@
 function [mocap_time,mocap_data_resampled,encoder_time,encoder_data_resampled] =test(mocap_data,offset_time,encoder_data)
-% PARA IR ALINEANDO DOS COLUMNAS POCO A POCO
+% % PARA IR ALINEANDO DOS COLUMNAS POCO A POCO
 % %Separamos datos del mocap
-% position_mocap=mocap_data(:,2);%columna 4 rotacion Z, columna 2 rotacion X
+% position_mocap=mocap_data(:,4);%columna 4 rotacion Z, columna 2 rotacion X
 % time_mocap=mocap_data(:,1);
 % 
 % %Igualar tiempos
@@ -19,8 +19,8 @@ function [mocap_time,mocap_data_resampled,encoder_time,encoder_data_resampled] =
 % % time_mech=time_mech(length(iniVal):length(time_mech));
 % % time_mech=time_mech-t_ini(length(t_ini));
 % motor=encoder_data(:,9); % 8 MOTOR7/ 9 MOTOR8
-
-%% times 2 colum poco a poco
+% 
+% % times 2 colum poco a poco
 % ts1=timeseries(r_test,t_test); %Mocap
 % ts1out = resample(ts1,0:0.01:t_test(length(t_test))); %resampleamos el mocap a la frecuencia del encoder
 % ts1out.Data = fillmissing(ts1out.Data,'next');
@@ -33,8 +33,8 @@ function [mocap_time,mocap_data_resampled,encoder_time,encoder_data_resampled] =
 % encoder_time=ts3out.Time;
 % encoder_data_resampled=ts3out.Data;
 
-%% **************************************************************************************************************************************
-%% DESCOMENTAR LOS SIGUIENTE CUANDO YA SE VAYA A GUARDAR EN UN DATASET TODAS LAS COLUMNAS ALINEADAS, NO SE APLICARÁ EL CAMBIO DE GRADOS A RADIANES.
+% **************************************************************************************************************************************
+% DESCOMENTAR LOS SIGUIENTE CUANDO YA SE VAYA A GUARDAR EN UN DATASET TODAS LAS COLUMNAS ALINEADAS, NO SE APLICARÁ EL CAMBIO DE GRADOS A RADIANES.
 % %Separamos datos del mocap
 position_mocap=mocap_data(:,2:7);%de la 2 a la 7 son las columnas de datos rotacion y posicion que queremos alinear
 time_mocap=mocap_data(:,1);
